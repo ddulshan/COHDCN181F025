@@ -19,7 +19,7 @@ class UDP(Structure):
         self.src_port =  struct.unpack("<H", struct.pack(">H", self.src))
         self.dest_port =  struct.unpack("<H", struct.pack(">H", self.dest))
 
-rawfile = open("udp_frame.bin", "rb").read()
+rawfile = open("udp_frame.bin", "rb").read()    #udp only stream file
 
 udp = UDP(rawfile)
 print("Source Port: " + ''.join(map(str, udp.src_port)))

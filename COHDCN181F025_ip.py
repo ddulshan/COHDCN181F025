@@ -29,11 +29,11 @@ class IP(Structure):
 
 proto = {1:"ICMP", 2:"IGMP", 6:"TCP"}
 
-rawfile = open("ip.bin", "rb").read()   #ip stream only file
+rawfile = open("google.bin", "rb").read()   #ip only stream file
 
 ip = IP(rawfile)
 
 print("Source IP: " + str(ip.src_address))
 print("Destination IP : " + str(ip.dest_address))
 print("Protocol : " + proto[ip.protocol])
-print("ID : " + str(ip.id))
+print("ID : " + ''.join(map(str, ip.id)))

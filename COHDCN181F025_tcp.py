@@ -27,7 +27,7 @@ class TCP(Structure):
 
 proto = {1:"ICMP", 2:"IGMP", 6:"TCP"}
 
-rawfile = open("tcp_frame.bin", "rb").read()
+rawfile = open("tcp_frame.bin", "rb").read()    #tcp only stream raw file
 
 tcp = TCP(rawfile)
 print("Source Port: " + ''.join(map(str, tcp.src_port)))
