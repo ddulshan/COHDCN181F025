@@ -25,7 +25,7 @@ class IP(Structure):
     def __init__(self, socket_buffer = None):
         self.src_address = socket.inet_ntoa(struct.pack("@I", self.src))
         self.dest_address = socket.inet_ntoa(struct.pack("@I", self.dest))
-        self.id = struct.unpack(">H", struct.pack("<H", self.ident))
+        self.id = struct.unpack("<H", struct.pack(">H", self.ident))
 
 proto = {1:"ICMP", 2:"IGMP", 6:"TCP"}
 
