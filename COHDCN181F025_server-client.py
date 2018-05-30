@@ -48,6 +48,8 @@ if args.listen:
     try:
         while True:
                 send = input()
+                if not send:
+                        conn.send("\n".encode())
                 conn.send(send.encode())
     except:
         print("Connection error occured, closing...")
@@ -66,6 +68,8 @@ if args.serverAdd:
     while True:
         try:
                 send = input()
+                if not send:
+                        conn.send("\n".encode())
                 clientSocket.sendall(send.encode())
         except:
                 print("Connection error occured, closing...")
