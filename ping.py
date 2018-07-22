@@ -57,9 +57,10 @@ def send_packet(socket, dst):
     return  recv_time, reply, send_time
 
 def recv_packet(socket):
-    socket.settimeout(4.0)
-    reply = socket.recv(1024)
-    socket.settimeout(0)
+    try:
+        reply = socket.recv(1024)
+    except socket.timeout:
+        reply = "timed out"
     recv_time = time.time()
 
     return recv_time, reply
@@ -69,10 +70,12 @@ sent_count = 0
 success_count = 0
 sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
 
-print("Pinging " + dst + " with 32 bytes of data:")
+print("Pinging " + dst + " with 32 bytes of data:\n")
 
 for c in range(0, 4):
+    sock.settimeout(4.0)
     recv_time, reply, send_time = send_packet(sock, dst)
+    sock.settimeout(0)
     sent_count += 1
 
     ip = IP(reply[:20])
@@ -83,8 +86,8 @@ for c in range(0, 4):
         print("Reply from " + ip.src_address + " bytes=32 time=" + str(round_time) + "ms TTL=" + str(ip.ttl))
         success_count += 1
     elif(icmp.typ == 3):
-        print("Reply from " + ip.dst_address + ": Destination host unreachable")
-    else:
+        print("Reply from " + ip.src_address + ": Destination host unreachable")
+    elif(reply == "timed out"):
         print("Request timed out")
     time.sleep(1)
 
