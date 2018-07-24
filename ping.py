@@ -21,9 +21,8 @@ class IP(Structure):
         return self.from_buffer_copy(socket_buffer)
 
     def __init__(self, socket_buffer = None):
-        self.src_address = socket.inet_ntoa(struct.pack("@I", self.src))
-        self.dst_address = socket.inet_ntoa(struct.pack("@I", self.dst))
-        self.id = struct.unpack("<H", struct.pack(">H", self.ident))
+        self.src_address = socket.inet_ntoa(struct.pack("i", self.src))
+        self.dst_address = socket.inet_ntoa(struct.pack("i", self.dst))
 
 class ICMP(Structure):
     _fields_ = [("typ", c_ubyte),
@@ -36,7 +35,7 @@ class ICMP(Structure):
         return self.from_buffer_copy(socket_buffer)
 
     def __init__(self, socket_buffer = None):
-        self.check = struct.unpack("<H", struct.pack(">H", self.checksum))
+        pass
 
 def send_packet(sock, dst):
     typ = 8
@@ -94,17 +93,23 @@ def checksum(source_string):
 
     return answer
 
+if(len(sys.argv) < 2):
+    print("Invalid Usage : ping.py [host]")
+    quit()
+
 try:
     dst = socket.gethostbyname(sys.argv[1])
 except socket.error:
     print("Could not find host", sys.argv[1])
     quit()
+
 sent_count = 0
 success_count = 0
 sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 if(dst != sys.argv[1]):
-    print("\nPinging " + sys.argv[1] + "[" + dst + "] with 32 bytes of data:")
+    print("\nPinging " + sys.argv[1] + "[" + dst + "] with 32 bytes of data:\n")
 else:
     print("\nPinging " + dst + " with 32 bytes of data:\n")
 
@@ -127,7 +132,10 @@ for c in range(0, 4):
         elif(icmp.typ == 3):
             print("Reply from " + ip.src_address + ": Destination host unreachable")
 
-    time.sleep(1)
+    try:
+        time.sleep(1)
+    except KeyboardInterrupt:
+        break
 
 
 lost_count = sent_count - success_count
